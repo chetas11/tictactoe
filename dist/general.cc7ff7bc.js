@@ -29798,27 +29798,54 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function Square(props) {
-  var _useState = (0, _react.useState)(),
-      _useState2 = _slicedToArray(_useState, 2),
-      value = _useState2[0],
-      setValue = _useState2[1];
-
   return /*#__PURE__*/_react.default.createElement("button", {
     className: "square",
     onClick: function onClick() {
-      setValue('X');
+      props.onClick();
     }
-  }, value);
+  }, props.value);
 }
 
 function Board() {
+  var _useState = (0, _react.useState)(Array(9).fill(null)),
+      _useState2 = _slicedToArray(_useState, 2),
+      squares = _useState2[0],
+      setSquares = _useState2[1];
+
+  var _useState3 = (0, _react.useState)(true),
+      _useState4 = _slicedToArray(_useState3, 2),
+      xIsnext = _useState4[0],
+      setXIsnext = _useState4[1];
+
   function renderSquare(i) {
     return /*#__PURE__*/_react.default.createElement(Square, {
-      value: i
+      value: squares[i],
+      onClick: function onClick() {
+        return handleClick(i);
+      }
     });
   }
 
-  var status = 'Next player: X';
+  function handleClick(i) {
+    if (calculateWinner(squares) || squares[i]) {
+      return;
+    }
+
+    var newSquares = squares.slice();
+    newSquares[i] = xIsnext ? 'X' : 'O';
+    setSquares(newSquares);
+    setXIsnext(!xIsnext);
+  }
+
+  var winner = calculateWinner(squares);
+  var status;
+
+  if (winner) {
+    status = "Winner " + winner;
+  } else {
+    status = "Next Player: " + (xIsnext ? "X" : "O");
+  }
+
   return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("div", {
     className: "status"
   }, status), /*#__PURE__*/_react.default.createElement("div", {
@@ -29838,6 +29865,23 @@ function Game() {
   }, /*#__PURE__*/_react.default.createElement(Board, null)), /*#__PURE__*/_react.default.createElement("div", {
     className: "game-info"
   }, /*#__PURE__*/_react.default.createElement("div", null), /*#__PURE__*/_react.default.createElement("ol", null)));
+}
+
+function calculateWinner(squares) {
+  var lines = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+
+  for (var i = 0; i < lines.length; i++) {
+    var _lines$i = _slicedToArray(lines[i], 3),
+        a = _lines$i[0],
+        b = _lines$i[1],
+        c = _lines$i[2];
+
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
+    }
+  }
+
+  return null;
 } // ========================================
 
 
