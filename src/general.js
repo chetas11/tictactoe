@@ -1,61 +1,57 @@
-import React, {useState} from "react";
-import ReactDOM from "react-dom";
+function Square() {
+  return (
+    <button className="square">
+      {/* TODO */}
+    </button>
+  );
+}
 
-class Square extends React.Component {
-  render() {
-    return (
-      React.createElement("button", { className: "square" }));
-  }}
-
-class Board extends React.Component {
-  renderSquare(i) {
-    return React.createElement(Square, null);
+function Board() {
+  function renderSquare(i) {
+    return <Square />;
   }
 
-  render() {
-    const status = 'Next player: X';
+  const status = 'Next player: X';
 
-    return (
-      React.createElement("div", null,
-      React.createElement("div", { className: "status" }, status),
-      React.createElement("div", { className: "board-row" },
-      this.renderSquare(0),
-      this.renderSquare(1),
-      this.renderSquare(2)),
+  return (
+    <div>
+      <div className="status">{status}</div>
+      <div className="board-row">
+        {renderSquare(0)}
+        {renderSquare(1)}
+        {renderSquare(2)}
+      </div>
+      <div className="board-row">
+        {renderSquare(3)}
+        {renderSquare(4)}
+        {renderSquare(5)}
+      </div>
+      <div className="board-row">
+        {renderSquare(6)}
+        {renderSquare(7)}
+        {renderSquare(8)}
+      </div>
+    </div>
+  );
+}
 
-      React.createElement("div", { className: "board-row" },
-      this.renderSquare(3),
-      this.renderSquare(4),
-      this.renderSquare(5)),
-
-      React.createElement("div", { className: "board-row" },
-      this.renderSquare(6),
-      this.renderSquare(7),
-      this.renderSquare(8))));
-
-
-
-  }}
-
-
-class Game extends React.Component {
-  render() {
-    return (
-      React.createElement("div", { className: "game" },
-      React.createElement("div", { className: "game-board" },
-      React.createElement(Board, null)),
-
-      React.createElement("div", { className: "game-info" },
-      React.createElement("div", null),
-      React.createElement("ol", null))));
-
-
-
-  }}
-
+function Game() {
+  return (
+    <div className="game">
+      <div className="game-board">
+        <Board />
+      </div>
+      <div className="game-info">
+        <div>{/* status */}</div>
+        <ol>{/* TODO */}</ol>
+      </div>
+    </div>
+  );
+}
 
 // ========================================
 
 ReactDOM.render(
-React.createElement(Game, null),
-document.getElementById('root'));
+  <Game />,
+  document.getElementById('root')
+);
