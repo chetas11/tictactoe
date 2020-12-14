@@ -29806,49 +29806,17 @@ function Square(props) {
   }, props.value);
 }
 
-function Board() {
-  var _useState = (0, _react.useState)(Array(9).fill(null)),
-      _useState2 = _slicedToArray(_useState, 2),
-      squares = _useState2[0],
-      setSquares = _useState2[1];
-
-  var _useState3 = (0, _react.useState)(true),
-      _useState4 = _slicedToArray(_useState3, 2),
-      xIsnext = _useState4[0],
-      setXIsnext = _useState4[1];
-
+function Board(props) {
   function renderSquare(i) {
     return /*#__PURE__*/_react.default.createElement(Square, {
-      value: squares[i],
+      value: props.squares[i],
       onClick: function onClick() {
-        return handleClick(i);
+        return props.onClick(i);
       }
     });
   }
 
-  function handleClick(i) {
-    if (calculateWinner(squares) || squares[i]) {
-      return;
-    }
-
-    var newSquares = squares.slice();
-    newSquares[i] = xIsnext ? 'X' : 'O';
-    setSquares(newSquares);
-    setXIsnext(!xIsnext);
-  }
-
-  var winner = calculateWinner(squares);
-  var status;
-
-  if (winner) {
-    status = "Winner " + winner;
-  } else {
-    status = "Next Player: " + (xIsnext ? "X" : "O");
-  }
-
   return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("div", {
-    className: "status"
-  }, status), /*#__PURE__*/_react.default.createElement("div", {
     className: "board-row"
   }, renderSquare(0), renderSquare(1), renderSquare(2)), /*#__PURE__*/_react.default.createElement("div", {
     className: "board-row"
@@ -29858,13 +29826,77 @@ function Board() {
 }
 
 function Game() {
+  var _useState = (0, _react.useState)([{
+    squares: Array(9).fill(null)
+  }]),
+      _useState2 = _slicedToArray(_useState, 2),
+      history = _useState2[0],
+      setHistory = _useState2[1];
+
+  var _useState3 = (0, _react.useState)(true),
+      _useState4 = _slicedToArray(_useState3, 2),
+      xIsNext = _useState4[0],
+      setXIsNext = _useState4[1];
+
+  var _useState5 = (0, _react.useState)(0),
+      _useState6 = _slicedToArray(_useState5, 2),
+      stepNumber = _useState6[0],
+      setStepNumber = _useState6[1];
+
+  function handleClick(i) {
+    var currentHistory = history.slice(0, stepNumber + 1);
+    var currentStep = currentHistory[currentHistory.length - 1];
+    var squares = currentStep.squares.slice();
+
+    if (calculateWinner(squares) || squares[i]) {
+      return;
+    }
+
+    squares[i] = xIsNext ? 'X' : 'O';
+    setHistory(currentHistory.concat([{
+      squares: squares
+    }]));
+    setStepNumber(currentHistory.length);
+    setXIsNext(!xIsNext);
+  }
+
+  function jumpTo(step) {
+    setStepNumber(step);
+    setXIsNext(step % 2 === 0);
+  }
+
+  var current = history[stepNumber];
+  var winner = calculateWinner(current.squares);
+  var moves = history.map(function (step, move) {
+    var desc = move ? 'Go to move #' + move : 'Go to game start';
+    return /*#__PURE__*/_react.default.createElement("li", {
+      key: move
+    }, /*#__PURE__*/_react.default.createElement("button", {
+      onClick: function onClick() {
+        return jumpTo(move);
+      }
+    }, desc));
+  });
+  var status;
+
+  if (winner) {
+    status = 'Winner: ' + winner;
+  } else {
+    status = 'Next player: ' + (xIsNext ? 'X' : 'O');
+  }
+
   return /*#__PURE__*/_react.default.createElement("div", {
     className: "game"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "game-board"
-  }, /*#__PURE__*/_react.default.createElement(Board, null)), /*#__PURE__*/_react.default.createElement("div", {
+  }, /*#__PURE__*/_react.default.createElement(Board, {
+    squares: current.squares,
+    onClick: function onClick(i) {
+      return handleClick(i);
+    }
+  })), /*#__PURE__*/_react.default.createElement("div", {
     className: "game-info"
-  }, /*#__PURE__*/_react.default.createElement("div", null), /*#__PURE__*/_react.default.createElement("ol", null)));
+  }, /*#__PURE__*/_react.default.createElement("div", null, status), /*#__PURE__*/_react.default.createElement("ol", null, moves)));
 }
 
 function calculateWinner(squares) {
@@ -29914,7 +29946,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50847" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53726" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
